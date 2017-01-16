@@ -1,0 +1,12 @@
+{
+  "name": "worflows",
+  "version": "1.0.0",
+  "description": "Contains course on workflows from Lynda.com",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "?.git"
+  },
+  "author": "Segun Konibire",
+  "license": "ISC"
+}
