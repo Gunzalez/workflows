@@ -5,7 +5,7 @@ var gulp = require('gulp'),
     compass = require('gulp-compass'),
     concat = require('gulp-concat');
 
-var coffeeScripts = ['components/coffee/tagline.coffee'];
+var coffeeSources = ['components/coffee/tagline.coffee'];
 
 var jsSources = [
     'components/scripts/rclick.js',
@@ -19,7 +19,7 @@ var sassSources = [
 ];
 
 gulp.task('coffee', function () {
-    gulp.src(coffeeScripts)
+    gulp.src(coffeeSources)
         .pipe(coffee({ bare: true })
             .on('error', gutil.log))
         .pipe(gulp.dest('components/scripts'))
@@ -43,6 +43,12 @@ gulp.task('compass', function () {
         }))
     .on('error', gutil.log)
     .pipe(gulp.dest('builds/development/css'))
+});
+
+gulp.task('watch', function () {
+    gulp.watch(coffeeSources, ['coffee']);
+    gulp.watch(jsSources, ['js']);
+    gulp.watch('components/sass/*.scss', ['compass']);
 });
 
 gulp.task('default', ['coffee', 'js', 'compass']);
