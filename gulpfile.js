@@ -15,7 +15,7 @@ var jsSources = [
 ];
 
 var sassSources = [
-    'components/sass/styles.scss'
+    'components/sass/style.scss'
 ];
 
 gulp.task('coffee', function () {
@@ -27,7 +27,7 @@ gulp.task('coffee', function () {
 
 gulp.task('js', function () {
     gulp.src(jsSources)
-        .pipe(concat('scripts.js'))
+        .pipe(concat('script.js'))
         .pipe(browserify())
         .pipe(gulp.dest('builds/development/js'))
 
