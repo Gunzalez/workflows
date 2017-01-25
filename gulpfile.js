@@ -6,26 +6,37 @@ var gulp = require('gulp'),
     connect = require('gulp-connect'),
     concat = require('gulp-concat');
 
-var coffeeSources = ['components/coffee/tagline.coffee'];
+var env,
+    coffeeSources,
+    htmlSources,
+    sassSources,
+    jsonSources,
+    jsSources,
+    outPutDir,
+    sassStyle;
 
-var jsSources = [
+
+env = process.env.NODE_ENV || 'development';
+
+if (env === 'development'){
+    outPutDir = 'builds/development';
+    sassStyle = 'expanded';
+} else {
+    outPutDir = 'builds/production';
+    sassStyle = 'compressed';
+}
+
+coffeeSources = ['components/coffee/tagline.coffee'];
+sassSources = ['components/sass/style.scss'];
+htmlSources = [outPutDir + '/*.html'];
+jsonSources = [outPutDir + '/js/*.json'];
+jsSources = [
     'components/scripts/rclick.js',
     'components/scripts/pixgrid.js',
     'components/scripts/tagline.js',
     'components/scripts/template.js'
 ];
 
-var sassSources = [
-    'components/sass/style.scss'
-];
-
-var htmlSources = [
-    'builds/development/*.html'
-];
-
-var jsonSources = [
-    'builds/development/js/*.json'
-];
 
 gulp.task('coffee', function () {
     gulp.src(coffeeSources)
@@ -38,20 +49,20 @@ gulp.task('js', function () {
     gulp.src(jsSources)
         .pipe(concat('script.js'))
         .pipe(browserify())
-        .pipe(gulp.dest('builds/development/js'))
+        .pipe(gulp.dest(outPutDir + '/js'))
         .pipe(connect.reload())
 });
 
 gulp.task('compass', function () {
     gulp.src(sassSources)
         .pipe(compass({
-            css: 'builds/development/css',
+            css: outPutDir + '/css',
             sass:'components/sass',
-            image:'builds/development/images',
-            style:'expanded'
+            image:outPutDir + '/images',
+            style: sassStyle
         }))
     .on('error', gutil.log)
-    .pipe(gulp.dest('builds/development/css'))
+    .pipe(gulp.dest(outPutDir + '/css'))
         .pipe(connect.reload())
 });
 
@@ -76,7 +87,7 @@ gulp.task('json', function () {
 
 gulp.task('connect', function () {
    connect.server({
-       root: 'builds/development/',
+       root: outPutDir + '/',
        livereload: true
    })
 });
