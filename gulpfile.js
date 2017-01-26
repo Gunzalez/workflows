@@ -7,6 +7,7 @@ var gulp = require('gulp'),
     gulpif = require('gulp-if'),                // To fork program flow depending on variables
     uglify = require('gulp-uglify'),            // To shrink js files to smallest possible size
     minifyHTML = require('gulp-minify-html'),   // For squeezing out all the white spaces in HTML files
+    jsonminify = require('gulp-jsonminify'),    // Minifies JSON, why can't we just used uglify?
     concat = require('gulp-concat');            // Joins many small js files into one long one
 
 var env,
@@ -94,6 +95,7 @@ gulp.task('watch', function () {
     gulp.watch(jsSources, ['js']);
     gulp.watch('components/sass/*.scss', ['compass']);
     gulp.watch('builds/development/*.html', ['html']);
+    gulp.watch('builds/development/js/*.json', ['json']);
     gulp.watch(jsonSources, ['json']);
 });
 
@@ -110,13 +112,13 @@ gulp.task('html', function () {
 });
 
 
-
-// watch json file, do a reload
+// same as HTML but for just json
 gulp.task('json', function () {
-    gulp.src(jsonSources)
+    gulp.src('builds/development/js/*.json')
+        .pipe(gulpif( env === 'production', jsonminify()))
+        .pipe(gulpif( env === 'production', gulp.dest('builds/production/js')))
         .pipe(connect.reload())
 });
-
 
 
 // actual server page reload plugin
