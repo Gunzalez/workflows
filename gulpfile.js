@@ -8,6 +8,10 @@ var gulp = require('gulp'),
     uglify = require('gulp-uglify'),            // To shrink js files to smallest possible size
     minifyHTML = require('gulp-minify-html'),   // For squeezing out all the white spaces in HTML files
     jsonminify = require('gulp-jsonminify'),    // Minifies JSON, why can't we just used uglify?
+
+    imagemin = require('gulp-imagemin'),
+    pngcrush = require('imagemin-pngcrush'),
+
     concat = require('gulp-concat');            // Joins many small js files into one long one
 
 var env,
@@ -96,6 +100,7 @@ gulp.task('watch', function () {
     gulp.watch('components/sass/*.scss', ['compass']);
     gulp.watch('builds/development/*.html', ['html']);
     gulp.watch('builds/development/js/*.json', ['json']);
+    gulp.watch('builds/development/images/**/*.*', ['images']);
     gulp.watch(jsonSources, ['json']);
 });
 
@@ -109,6 +114,18 @@ gulp.task('html', function () {
         .pipe(gulpif( env === 'production', minifyHTML()))
         .pipe(gulpif( env === 'production', gulp.dest(outPutDir)))
         .pipe(connect.reload())
+});
+
+
+gulp.task('images', function () {
+    gulp.src('builds/development/images/**/*.*')
+        .pipe(gulpif( env === 'production', imagemin({
+            progressive: true,
+            svgoPlugins: [{ removeViewBox: false}],
+            use: [pngcrush()]
+        })))
+        .pipe(gulpif( env === 'production', gulp.dest(outPutDir + '/images')))
+        .pipe(connect.reload());
 });
 
 
@@ -131,5 +148,5 @@ gulp.task('connect', function () {
 
 
 // just a sequence of tasks, set to the default task
-gulp.task('default', ['coffee', 'html', 'json', 'js', 'compass', 'connect', 'watch']);
+gulp.task('default', ['coffee', 'html', 'json', 'js', 'compass', 'images', 'connect', 'watch']);
 
